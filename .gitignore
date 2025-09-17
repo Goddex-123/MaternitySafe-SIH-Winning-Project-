@@ -1,0 +1,84 @@
+# Dependencies
+node_modules/
+*/node_modules/
+.pnp
+.pnp.js
+
+# Production builds
+/build
+dist/
+*/build/
+*/dist/
+
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# Database
+*.sqlite
+*.db
+database/
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage directory used by tools like istanbul
+coverage/
+*.lcov
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.temp
+
+# Build output
+*.tsbuildinfo
+
+# Optional npm cache directory
+.npm
+
+# Optional eslint cache
+.eslintcache
+
+# PWA service worker
+/public/sw.js
+/public/workbox-*
+
+# Demo files (keep scenarios but exclude large files)
+demo/video/
+demo/screenshots/*.png
+demo/screenshots/*.jpg
+assets/images/*.png
+assets/images/*.jpg
+!assets/images/logo.png
+
+# Backup files
+*.backup
+*.bak
