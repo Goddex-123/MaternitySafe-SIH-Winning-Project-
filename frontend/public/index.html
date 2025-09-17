@@ -1,0 +1,1271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MaternitySafe - ASHA Interface</title>
+    <meta name="theme-color" content="#0f0f0f">
+    <link rel="manifest" href="./manifest.json">
+    <link href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #007AFF;
+            --secondary: #5856D6;
+            --accent: #FF3B30;
+            --success: #34C759;
+            --warning: #FF9500;
+            --error: #FF3B30;
+            
+            /* Dark theme colors */
+            --bg-primary: #000000;
+            --bg-secondary: #0a0a0a;
+            --bg-tertiary: #161618;
+            --surface: #1c1c1e;
+            --surface-elevated: #2c2c2e;
+            
+            /* Glass morphism */
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --glass-shadow: rgba(0, 0, 0, 0.3);
+            
+            /* Text colors */
+            --text-primary: #ffffff;
+            --text-secondary: rgba(255, 255, 255, 0.8);
+            --text-tertiary: rgba(255, 255, 255, 0.6);
+            --text-disabled: rgba(255, 255, 255, 0.3);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        body {
+            font-family: 'SF Pro Display', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            background-image: 
+                radial-gradient(at 40% 20%, hsla(225, 100%, 25%, 0.1) 0px, transparent 50%),
+                radial-gradient(at 80% 0%, hsla(189, 100%, 56%, 0.1) 0px, transparent 50%),
+                radial-gradient(at 0% 50%, hsla(355, 100%, 93%, 0.05) 0px, transparent 50%),
+                radial-gradient(at 80% 50%, hsla(340, 100%, 76%, 0.1) 0px, transparent 50%),
+                radial-gradient(at 0% 100%, hsla(22, 100%, 77%, 0.05) 0px, transparent 50%),
+                radial-gradient(at 80% 100%, hsla(242, 100%, 70%, 0.1) 0px, transparent 50%),
+                radial-gradient(at 0% 0%, hsla(343, 100%, 76%, 0.05) 0px, transparent 50%);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+        
+        /* 3D Parallax Background Elements */
+        .bg-elements {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+            perspective: 1000px;
+        }
+        
+        .floating-shape {
+            position: absolute;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 50%;
+            animation: float3D 8s ease-in-out infinite;
+            box-shadow: 
+                0 8px 32px var(--glass-shadow),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+        
+        .shape1 {
+            width: 280px;
+            height: 280px;
+            top: 5%;
+            left: -5%;
+            animation-delay: 0s;
+            background: linear-gradient(135deg, 
+                rgba(0, 122, 255, 0.1) 0%, 
+                rgba(88, 86, 214, 0.05) 100%);
+        }
+        
+        .shape2 {
+            width: 200px;
+            height: 200px;
+            top: 40%;
+            right: -3%;
+            animation-delay: 2.5s;
+            background: linear-gradient(135deg, 
+                rgba(255, 59, 48, 0.08) 0%, 
+                rgba(255, 149, 0, 0.05) 100%);
+        }
+        
+        .shape3 {
+            width: 160px;
+            height: 160px;
+            top: 75%;
+            left: 15%;
+            animation-delay: 5s;
+            background: linear-gradient(135deg, 
+                rgba(52, 199, 89, 0.08) 0%, 
+                rgba(0, 122, 255, 0.05) 100%);
+        }
+        
+        .shape4 {
+            width: 120px;
+            height: 120px;
+            top: 20%;
+            right: 25%;
+            animation-delay: 7s;
+            background: linear-gradient(135deg, 
+                rgba(88, 86, 214, 0.08) 0%, 
+                rgba(255, 59, 48, 0.05) 100%);
+        }
+        
+        @keyframes float3D {
+            0%, 100% { 
+                transform: translateY(0px) translateX(0px) rotateX(0deg) rotateY(0deg) scale(1);
+                filter: blur(0px);
+            }
+            25% { 
+                transform: translateY(-30px) translateX(20px) rotateX(5deg) rotateY(-5deg) scale(1.05);
+                filter: blur(1px);
+            }
+            50% { 
+                transform: translateY(-15px) translateX(-25px) rotateX(-3deg) rotateY(8deg) scale(0.95);
+                filter: blur(0.5px);
+            }
+            75% { 
+                transform: translateY(-40px) translateX(15px) rotateX(7deg) rotateY(-3deg) scale(1.03);
+                filter: blur(1.5px);
+            }
+        }
+        
+        .main-container {
+            padding: 1.5rem;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            perspective: 1000px;
+        }
+        
+        .glass-container {
+            width: 100%;
+            max-width: 420px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(40px);
+            -webkit-backdrop-filter: blur(40px);
+            border: 1px solid var(--glass-border);
+            border-radius: 32px;
+            box-shadow: 
+                0 20px 60px rgba(0, 0, 0, 0.4),
+                0 8px 32px rgba(0, 0, 0, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1),
+                inset 0 -1px 0 rgba(255, 255, 255, 0.05);
+            overflow: hidden;
+            position: relative;
+            animation: slideUp 1.2s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            transform-style: preserve-3d;
+        }
+        
+        .glass-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, 
+                transparent 0%, 
+                rgba(255, 255, 255, 0.3) 20%, 
+                rgba(255, 255, 255, 0.8) 50%, 
+                rgba(255, 255, 255, 0.3) 80%, 
+                transparent 100%);
+            animation: shimmer 3s ease-in-out infinite;
+        }
+        
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(80px) rotateX(10deg);
+                filter: blur(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) rotateX(0deg);
+                filter: blur(0px);
+            }
+        }
+        
+        .header {
+            background: linear-gradient(135deg, 
+                var(--glass-bg) 0%, 
+                rgba(255, 255, 255, 0.08) 100%);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--glass-border);
+            color: var(--text-primary);
+            padding: 2.5rem 2rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -50%;
+            width: 200%;
+            height: 2px;
+            background: linear-gradient(90deg, 
+                transparent 0%,
+                var(--primary) 25%,
+                var(--secondary) 50%,
+                var(--primary) 75%,
+                transparent 100%);
+            animation: shimmer 4s ease-in-out infinite;
+            opacity: 0.6;
+        }
+        
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); opacity: 0; }
+            50% { opacity: 1; }
+            100% { transform: translateX(100%); opacity: 0; }
+        }
+        
+        .header h1 {
+            font-size: 2.2rem;
+            font-weight: 800;
+            margin-bottom: 0.8rem;
+            position: relative;
+            z-index: 1;
+            background: linear-gradient(135deg, 
+                var(--text-primary) 0%, 
+                var(--text-secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -0.02em;
+            text-shadow: 0 0 30px rgba(255, 255, 255, 0.1);
+        }
+        
+        .header p {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            font-weight: 400;
+            position: relative;
+            z-index: 1;
+            letter-spacing: 0.01em;
+        }
+        
+        .form-container {
+            padding: 2rem;
+            background: var(--surface);
+        }
+        
+        .section {
+            margin-bottom: 1.5rem;
+            padding: 1.8rem;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 20px;
+            border: 1px solid var(--glass-border);
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            animation: fadeIn 0.8s ease-out forwards;
+            opacity: 0;
+            box-shadow: 
+                0 8px 32px rgba(0, 0, 0, 0.12),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+        
+        .section:nth-child(1) { animation-delay: 0.1s; }
+        .section:nth-child(2) { animation-delay: 0.2s; }
+        .section:nth-child(3) { animation-delay: 0.3s; }
+        .section:nth-child(4) { animation-delay: 0.4s; }
+        .section:nth-child(5) { animation-delay: 0.5s; }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px) scale(0.95);
+                filter: blur(5px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+                filter: blur(0px);
+            }
+        }
+        
+        .section:hover {
+            background: rgba(255, 255, 255, 0.08);
+            transform: translateY(-4px) scale(1.01);
+            box-shadow: 
+                0 12px 40px rgba(0, 0, 0, 0.15),
+                0 4px 12px rgba(0, 0, 0, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 0.15);
+        }
+        
+        .section-title {
+            color: var(--text-primary);
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            letter-spacing: -0.01em;
+        }
+        
+        .form-group {
+            margin-bottom: 1.2rem;
+        }
+        
+        .form-group label {
+            display: block;
+            color: var(--text-secondary);
+            font-weight: 600;
+            margin-bottom: 0.6rem;
+            font-size: 0.95rem;
+            letter-spacing: 0.005em;
+        }
+        
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 1rem 1.2rem;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            font-size: 1rem;
+            font-weight: 500;
+            color: var(--text-primary);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            box-shadow: 
+                0 4px 12px rgba(0, 0, 0, 0.05),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+        
+        .form-group input::placeholder {
+            color: var(--text-disabled);
+            font-weight: 400;
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: rgba(255, 255, 255, 0.08);
+            box-shadow: 
+                0 0 0 3px rgba(0, 122, 255, 0.1),
+                0 8px 25px rgba(0, 0, 0, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 0.15);
+            transform: translateY(-2px) scale(1.01);
+        }
+        
+        .form-group select {
+            cursor: pointer;
+            background-image: url('data:image/svg+xml;utf8,<svg fill="%23ffffff" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>');
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            background-size: 1rem;
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+        }
+        
+        .form-group select option {
+            background: var(--surface-elevated);
+            color: var(--text-primary);
+            padding: 0.5rem;
+        }
+        
+        .bp-container {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+        
+        .bp-container input {
+            flex: 1;
+        }
+        
+        .bp-separator {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--text-secondary);
+            padding: 0 0.5rem;
+        }
+        
+        .symptoms-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+        
+        .symptom-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 1rem;
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 14px;
+            border: 1px solid var(--glass-border);
+            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            cursor: pointer;
+            box-shadow: 
+                0 2px 8px rgba(0, 0, 0, 0.05),
+                inset 0 1px 0 rgba(255, 255, 255, 0.08);
+        }
+        
+        .symptom-item:hover {
+            background: rgba(255, 255, 255, 0.08);
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 
+                0 8px 25px rgba(0, 0, 0, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 0.12);
+        }
+        
+        .symptom-item input[type="checkbox"] {
+            width: 1.2rem;
+            height: 1.2rem;
+            accent-color: var(--primary);
+            background: var(--glass-bg);
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        .symptom-item label {
+            margin-bottom: 0 !important;
+            cursor: pointer;
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+        
+        .assess-btn {
+            width: 100%;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            padding: 1.2rem 2rem;
+            border: none;
+            border-radius: 20px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            margin-top: 2rem;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            box-shadow: 
+                0 8px 32px rgba(0, 122, 255, 0.25),
+                0 4px 16px rgba(0, 0, 0, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            letter-spacing: 0.02em;
+        }
+        
+        .assess-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, 
+                transparent, 
+                rgba(255, 255, 255, 0.2), 
+                transparent);
+            transition: left 0.6s ease;
+        }
+        
+        .assess-btn:hover::before {
+            left: 100%;
+        }
+        
+        .assess-btn:hover {
+            transform: translateY(-6px) scale(1.02);
+            box-shadow: 
+                0 12px 48px rgba(0, 122, 255, 0.3),
+                0 6px 24px rgba(0, 0, 0, 0.15),
+                inset 0 1px 0 rgba(255, 255, 255, 0.3);
+        }
+        
+        .assess-btn:active {
+            transform: translateY(-2px) scale(1.01);
+            transition: all 0.1s ease;
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 3rem 2rem;
+            background: var(--surface);
+        }
+        
+        .spinner {
+            width: 3rem;
+            height: 3rem;
+            border: 3px solid var(--glass-border);
+            border-top: 3px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1.2s linear infinite;
+            margin: 0 auto 1.5rem;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .loading h3 {
+            color: var(--text-primary);
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        
+        .loading p {
+            color: var(--text-secondary);
+            font-size: 1rem;
+        }
+        
+        .result {
+            display: none;
+            padding: 2rem;
+            text-align: center;
+            background: var(--surface);
+        }
+        
+        .risk-badge {
+            display: inline-block;
+            padding: 1rem 1.5rem;
+            border-radius: 30px;
+            font-weight: 800;
+            font-size: 1.1rem;
+            margin-bottom: 1.5rem;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            letter-spacing: 0.05em;
+        }
+        
+        .risk-low { 
+            background: linear-gradient(135deg, rgba(52, 199, 89, 0.2), rgba(52, 199, 89, 0.1)); 
+            color: var(--success); 
+        }
+        .risk-medium { 
+            background: linear-gradient(135deg, rgba(255, 149, 0, 0.2), rgba(255, 149, 0, 0.1)); 
+            color: var(--warning); 
+        }
+        .risk-high { 
+            background: linear-gradient(135deg, rgba(255, 59, 48, 0.2), rgba(255, 59, 48, 0.1)); 
+            color: var(--error); 
+        }
+        .risk-emergency { 
+            background: linear-gradient(135deg, var(--error), rgba(255, 59, 48, 0.8)); 
+            color: white; 
+        }
+        
+        .result h3 {
+            color: var(--text-primary);
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        
+        .result p {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .recommendations {
+            text-align: left;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            padding: 1.5rem;
+            border-radius: 20px;
+            margin-top: 1.5rem;
+            box-shadow: 
+                0 8px 32px rgba(0, 0, 0, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+        
+        .recommendations h3 {
+            color: var(--primary);
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+        
+        .recommendations ul {
+            list-style: none;
+        }
+        
+        .recommendations li {
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--glass-border);
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+        
+        .recommendations li:last-child {
+            border-bottom: none;
+        }
+        
+        .hospital-info {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            padding: 1.5rem;
+            border-radius: 20px;
+            margin-top: 1rem;
+            box-shadow: 
+                0 8px 32px rgba(0, 0, 0, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+        
+        .hospital-info h3 {
+            color: var(--primary);
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+        
+        .hospital-info p {
+            color: var(--text-secondary);
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+        
+        .referral-code {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 1.2rem;
+            border-radius: 16px;
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: 800;
+            letter-spacing: 0.2em;
+            margin-top: 1rem;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 
+                0 8px 32px rgba(0, 122, 255, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        }
+        
+        .status-indicator {
+            position: fixed;
+            top: 1.5rem;
+            right: 1.5rem;
+            padding: 0.8rem 1.2rem;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            color: var(--success);
+            border-radius: 25px;
+            font-size: 0.9rem;
+            font-weight: 700;
+            border: 1px solid var(--glass-border);
+            z-index: 1000;
+            animation: statusPulse 3s ease-in-out infinite;
+            box-shadow: 
+                0 8px 32px rgba(0, 0, 0, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+        
+        .status-indicator.offline {
+            color: var(--error);
+        }
+        
+        @keyframes statusPulse {
+            0%, 100% { 
+                opacity: 1;
+                transform: scale(1);
+            }
+            50% { 
+                opacity: 0.8;
+                transform: scale(1.02);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 3D Parallax Background Elements -->
+    <div class="bg-elements">
+        <div class="floating-shape shape1"></div>
+        <div class="floating-shape shape2"></div>
+        <div class="floating-shape shape3"></div>
+        <div class="floating-shape shape4"></div>
+    </div>
+    
+    <div class="status-indicator" id="connectionStatus">
+        🟢 Online - Ready
+    </div>
+    
+    <div class="main-container">
+        <div class="glass-container">
+        <div class="header">
+            <h1>🏥 MaternitySafe</h1>
+            <p>AI-Powered Maternal Health Assessment</p>
+        </div>
+        
+        <div class="form-container" id="assessmentForm">
+            <div class="section">
+                <div class="section-title">
+                    👩‍⚕️ Patient Information
+                </div>
+                <div class="form-group">
+                    <label for="patientName">Patient Name (Optional)</label>
+                    <input type="text" id="patientName" placeholder="Enter patient name">
+                </div>
+                <div class="form-group">
+                    <label for="patientAge">Age</label>
+                    <input type="number" id="patientAge" placeholder="28" min="15" max="50">
+                </div>
+                <div class="form-group">
+                    <label for="gestationalAge">Gestational Age (weeks)</label>
+                    <input type="number" id="gestationalAge" placeholder="36" min="1" max="42">
+                </div>
+            </div>
+            
+            <div class="section">
+                <div class="section-title">
+                    🩺 Vital Signs
+                </div>
+                <div class="form-group">
+                    <label>Blood Pressure (mmHg)</label>
+                    <div class="bp-container">
+                        <input type="number" id="systolic" placeholder="165" min="80" max="200">
+                        <span class="bp-separator">/</span>
+                        <input type="number" id="diastolic" placeholder="105" min="50" max="120">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="section">
+                <div class="section-title">
+                    🩸 Bleeding Assessment
+                </div>
+                <div class="form-group">
+                    <select id="bleeding">
+                        <option value="none">No bleeding</option>
+                        <option value="spotting">Spotting</option>
+                        <option value="light">Light bleeding</option>
+                        <option value="moderate">Moderate bleeding</option>
+                        <option value="heavy">Heavy bleeding</option>
+                        <option value="severe">Severe bleeding</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="section">
+                <div class="section-title">
+                    ⚠️ Symptoms
+                </div>
+                <div class="symptoms-grid">
+                    <div class="symptom-item">
+                        <input type="checkbox" id="severe_headache" value="severe_headache">
+                        <label for="severe_headache">Severe headache</label>
+                    </div>
+                    <div class="symptom-item">
+                        <input type="checkbox" id="vision_changes" value="vision_changes">
+                        <label for="vision_changes">Vision changes</label>
+                    </div>
+                    <div class="symptom-item">
+                        <input type="checkbox" id="swelling" value="swelling">
+                        <label for="swelling">Swelling</label>
+                    </div>
+                    <div class="symptom-item">
+                        <input type="checkbox" id="dizziness" value="dizziness">
+                        <label for="dizziness">Dizziness</label>
+                    </div>
+                    <div class="symptom-item">
+                        <input type="checkbox" id="abdominal_pain" value="abdominal_pain">
+                        <label for="abdominal_pain">Abdominal pain</label>
+                    </div>
+                    <div class="symptom-item">
+                        <input type="checkbox" id="contractions" value="contractions">
+                        <label for="contractions">Contractions</label>
+                    </div>
+                    <div class="symptom-item">
+                        <input type="checkbox" id="reduced_fetal_movement" value="reduced_fetal_movement">
+                        <label for="reduced_fetal_movement">Reduced fetal movement</label>
+                    </div>
+                    <div class="symptom-item">
+                        <input type="checkbox" id="fever" value="fever">
+                        <label for="fever">Fever</label>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="section">
+                <div class="section-title">
+                    🧪 Lab Results
+                </div>
+                <div class="form-group">
+                    <label for="hemoglobin">Hemoglobin (g/dL)</label>
+                    <input type="number" id="hemoglobin" placeholder="11.2" min="5" max="18" step="0.1">
+                </div>
+                <div class="form-group">
+                    <label for="proteinuria">Proteinuria</label>
+                    <select id="proteinuria">
+                        <option value="negative">Negative</option>
+                        <option value="trace">Trace</option>
+                        <option value="mild">Mild (+)</option>
+                        <option value="moderate">Moderate (++)</option>
+                        <option value="severe">Severe (+++)</option>
+                    </select>
+                </div>
+            </div>
+            
+            <button class="assess-btn" onclick="assessRisk()">
+                🧠 Assess Risk with AI
+            </button>
+        </div>
+        
+        <div class="loading" id="loadingSection">
+            <div class="spinner"></div>
+            <h3>Processing Assessment...</h3>
+            <p>Our AI is analyzing the medical data</p>
+        </div>
+        
+        <div class="result" id="resultSection">
+            <div id="riskBadge" class="risk-badge"></div>
+            <h3 id="riskTitle"></h3>
+            <p id="riskDescription"></p>
+            
+            <div id="hospitalInfo" class="hospital-info" style="display: none;">
+                <h3>🏥 Recommended Hospital</h3>
+                <p id="hospitalName"></p>
+                <p id="hospitalDistance"></p>
+                <p id="hospitalEta"></p>
+                
+                <div id="referralCode" class="referral-code" style="display: none;"></div>
+            </div>
+            
+            <div class="recommendations" id="recommendationsSection">
+                <h3>📋 Next Steps</h3>
+                <ul id="recommendationsList"></ul>
+            </div>
+            
+            <button class="assess-btn" onclick="resetForm()" style="background: linear-gradient(135deg, #6B7280, #4B5563); margin-top: 20px;">
+                📝 New Assessment
+            </button>
+        </div>
+        </div>
+    </div>
+    
+    <script>
+        // Demo data for offline mode
+        const demoHospitals = [
+            {
+                id: 'hosp_001',
+                name: 'Primary Health Centre - Rajgadh',
+                distance: 5.2,
+                eta: 18,
+                capabilities: ['maternity_ward', 'basic_emergency']
+            },
+            {
+                id: 'hosp_002', 
+                name: 'District Hospital - Alwar',
+                distance: 15.2,
+                eta: 35,
+                capabilities: ['emergency_department', 'obgyn_specialist', 'operating_theater', 'blood_bank']
+            },
+            {
+                id: 'hosp_003',
+                name: 'SMS Medical College - Jaipur', 
+                distance: 45.8,
+                eta: 65,
+                capabilities: ['emergency_department', 'obgyn_specialist', 'operating_theater', 'blood_bank', 'nicu', 'icu']
+            }
+        ];
+        
+        // Check connection status
+        function updateConnectionStatus() {
+            const status = document.getElementById('connectionStatus');
+            if (navigator.onLine) {
+                status.textContent = '🟢 Online - Live AI';
+                status.classList.remove('offline');
+            } else {
+                status.textContent = '🔴 Offline - Local AI';
+                status.classList.add('offline');
+            }
+        }
+        
+        window.addEventListener('online', updateConnectionStatus);
+        window.addEventListener('offline', updateConnectionStatus);
+        updateConnectionStatus();
+        
+        // Risk calculation (simplified version for demo)
+        function calculateDemoRisk(data) {
+            let score = 0;
+            const factors = [];
+            
+            // Blood pressure assessment
+            if (data.systolic >= 180 || data.diastolic >= 110) {
+                score += 24; // 8 * 3 weight
+                factors.push(`Severe hypertension: ${data.systolic}/${data.diastolic} mmHg`);
+            } else if (data.systolic >= 140 || data.diastolic >= 90) {
+                score += 15; // 5 * 3 weight
+                factors.push(`Hypertension (high): ${data.systolic}/${data.diastolic} mmHg`);
+            } else if (data.systolic >= 130 || data.diastolic >= 85) {
+                score += 6; // 2 * 3 weight
+                factors.push(`Elevated blood pressure: ${data.systolic}/${data.diastolic} mmHg`);
+            }
+            
+            // Bleeding assessment
+            const bleedingScores = { none: 0, spotting: 5, light: 10, moderate: 15, heavy: 20, severe: 25 };
+            if (data.bleeding !== 'none') {
+                score += bleedingScores[data.bleeding] || 0;
+                factors.push(`Bleeding: ${data.bleeding}`);
+            }
+            
+            // Symptoms
+            const symptomScores = {
+                'severe_headache': 6,
+                'vision_changes': 6,
+                'reduced_fetal_movement': 12,
+                'abdominal_pain': 6,
+                'contractions': 6,
+                'swelling': 2,
+                'dizziness': 1,
+                'fever': 4
+            };
+            
+            data.symptoms.forEach(symptom => {
+                if (symptomScores[symptom]) {
+                    score += symptomScores[symptom];
+                    factors.push(symptom.replace('_', ' '));
+                }
+            });
+            
+            // Lab results
+            if (data.proteinuria !== 'negative') {
+                const proteinScores = { trace: 2, mild: 4, moderate: 6, severe: 8 };
+                score += proteinScores[data.proteinuria] || 0;
+                factors.push(`Proteinuria: ${data.proteinuria}`);
+            }
+            
+            if (data.hemoglobin < 7) {
+                score += 12;
+                factors.push(`Severe anemia: Hb ${data.hemoglobin} g/dL`);
+            } else if (data.hemoglobin < 9) {
+                score += 6;
+                factors.push(`Moderate anemia: Hb ${data.hemoglobin} g/dL`);
+            } else if (data.hemoglobin < 11) {
+                score += 2;
+                factors.push(`Mild anemia: Hb ${data.hemoglobin} g/dL`);
+            }
+            
+            // Determine risk level
+            let riskLevel, urgency, nextSteps;
+            if (score >= 26) {
+                riskLevel = 'EMERGENCY';
+                urgency = 'immediate';
+                nextSteps = ['EMERGENCY: Call ambulance immediately', 'Contact emergency services', 'Prepare for immediate transfer'];
+            } else if (score >= 13) {
+                riskLevel = 'HIGH';
+                urgency = 'urgent';
+                nextSteps = ['URGENT: Refer to hospital immediately', 'Arrange transportation', 'Notify receiving hospital'];
+            } else if (score >= 6) {
+                riskLevel = 'MEDIUM';
+                urgency = 'priority';
+                nextSteps = ['Increase monitoring frequency', 'Consider referral to specialist', 'Schedule follow-up within 1-2 weeks'];
+            } else {
+                riskLevel = 'LOW';
+                urgency = 'routine';
+                nextSteps = ['Continue routine prenatal care', 'Schedule next appointment as planned', 'Provide health education materials'];
+            }
+            
+            return {
+                riskScore: score,
+                riskLevel,
+                urgency,
+                riskFactors: factors,
+                nextSteps,
+                recommendedHospitals: riskLevel === 'HIGH' || riskLevel === 'EMERGENCY' ? 
+                    demoHospitals.filter(h => h.capabilities.includes('emergency_department')) : []
+            };
+        }
+        
+        async function assessRisk() {
+            // Collect form data
+            const data = {
+                patientData: {
+                    name: document.getElementById('patientName').value || 'Anonymous',
+                    age: parseInt(document.getElementById('patientAge').value)
+                },
+                gestationalAge: parseInt(document.getElementById('gestationalAge').value),
+                bloodPressure: {
+                    systolic: parseInt(document.getElementById('systolic').value),
+                    diastolic: parseInt(document.getElementById('diastolic').value)
+                },
+                bleeding: document.getElementById('bleeding').value,
+                symptoms: Array.from(document.querySelectorAll('input[type="checkbox"]:checked')).map(cb => cb.value),
+                labResults: {
+                    hemoglobin: document.getElementById('hemoglobin').value,
+                    proteinuria: document.getElementById('proteinuria').value
+                }
+            };
+            
+            // Validate required fields
+            if (!data.gestationalAge || !data.bloodPressure.systolic || !data.bloodPressure.diastolic) {
+                alert('Please fill in all required fields (gestational age and blood pressure)');
+                return;
+            }
+            
+            // Show loading
+            document.getElementById('assessmentForm').style.display = 'none';
+            document.getElementById('loadingSection').style.display = 'block';
+            
+            try {
+                let result;
+                
+                if (navigator.onLine) {
+                    // Try to connect to real API
+                    try {
+                        const response = await fetch('http://localhost:5000/api/assessment', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify(data)
+                        });
+                        
+                        if (response.ok) {
+                            result = await response.json();
+                        } else {
+                            throw new Error('API unavailable');
+                        }
+                    } catch (apiError) {
+                        console.log('API unavailable, using demo mode');
+                        result = calculateDemoRisk({
+                            ...data,
+                            systolic: data.bloodPressure.systolic,
+                            diastolic: data.bloodPressure.diastolic,
+                            hemoglobin: parseFloat(data.labResults.hemoglobin) || 12,
+                            proteinuria: data.labResults.proteinuria
+                        });
+                    }
+                } else {
+                    // Offline mode
+                    result = calculateDemoRisk({
+                        ...data,
+                        systolic: data.bloodPressure.systolic,
+                        diastolic: data.bloodPressure.diastolic,
+                        hemoglobin: parseFloat(data.labResults.hemoglobin) || 12,
+                        proteinuria: data.labResults.proteinuria
+                    });
+                }
+                
+                // Simulate processing time
+                setTimeout(() => {
+                    displayResult(result, data);
+                }, 1500);
+                
+            } catch (error) {
+                console.error('Assessment error:', error);
+                alert('Assessment failed. Please try again.');
+                resetForm();
+            }
+        }
+        
+        function displayResult(result, originalData) {
+            document.getElementById('loadingSection').style.display = 'none';
+            document.getElementById('resultSection').style.display = 'block';
+            
+            // Risk badge
+            const badge = document.getElementById('riskBadge');
+            const title = document.getElementById('riskTitle');
+            const description = document.getElementById('riskDescription');
+            
+            badge.textContent = `${result.riskLevel} RISK`;
+            badge.className = `risk-badge risk-${result.riskLevel.toLowerCase()}`;
+            
+            title.textContent = `Risk Score: ${result.riskScore}/100`;
+            description.textContent = `Urgency Level: ${result.urgency}`;
+            
+            // Hospital recommendation
+            if (result.recommendedHospitals && result.recommendedHospitals.length > 0) {
+                const hospital = result.recommendedHospitals[0];
+                document.getElementById('hospitalInfo').style.display = 'block';
+                document.getElementById('hospitalName').textContent = hospital.name;
+                document.getElementById('hospitalDistance').textContent = `Distance: ${hospital.distance} km`;
+                document.getElementById('hospitalEta').textContent = `ETA: ${hospital.eta} minutes`;
+                
+                // Generate referral code for high/emergency risk
+                if (result.riskLevel === 'HIGH' || result.riskLevel === 'EMERGENCY') {
+                    const referralCode = 'REF' + Math.random().toString(36).substr(2, 5).toUpperCase();
+                    document.getElementById('referralCode').textContent = referralCode;
+                    document.getElementById('referralCode').style.display = 'block';
+                }
+            }
+            
+            // Recommendations
+            const list = document.getElementById('recommendationsList');
+            list.innerHTML = '';
+            result.nextSteps.forEach(step => {
+                const li = document.createElement('li');
+                li.textContent = step;
+                list.appendChild(li);
+            });
+            
+            // Add risk factors if any
+            if (result.riskFactors && result.riskFactors.length > 0) {
+                const factorsHeader = document.createElement('h3');
+                factorsHeader.textContent = '⚠️ Risk Factors Identified';
+                factorsHeader.style.marginTop = '20px';
+                document.getElementById('recommendationsSection').appendChild(factorsHeader);
+                
+                const factorsList = document.createElement('ul');
+                result.riskFactors.forEach(factor => {
+                    const li = document.createElement('li');
+                    li.textContent = factor;
+                    li.style.color = '#DC2626';
+                    li.style.fontWeight = '500';
+                    factorsList.appendChild(li);
+                });
+                document.getElementById('recommendationsSection').appendChild(factorsList);
+            }
+        }
+        
+        function resetForm() {
+            document.getElementById('resultSection').style.display = 'none';
+            document.getElementById('assessmentForm').style.display = 'block';
+            
+            // Clear form
+            document.querySelectorAll('input, select').forEach(input => {
+                if (input.type === 'checkbox') {
+                    input.checked = false;
+                } else {
+                    input.value = '';
+                }
+            });
+            
+            // Clear previous results
+            document.getElementById('hospitalInfo').style.display = 'none';
+            document.getElementById('referralCode').style.display = 'none';
+            
+            // Remove dynamically added elements
+            const recommendations = document.getElementById('recommendationsSection');
+            const extraElements = recommendations.querySelectorAll('h3:not(:first-child), ul:not(:first-child)');
+            extraElements.forEach(el => el.remove());
+        }
+        
+        // Load demo data for Sunita scenario
+        function loadSunitaDemo() {
+            document.getElementById('patientName').value = 'Sunita Devi';
+            document.getElementById('patientAge').value = '28';
+            document.getElementById('gestationalAge').value = '36';
+            document.getElementById('systolic').value = '165';
+            document.getElementById('diastolic').value = '105';
+            document.getElementById('severe_headache').checked = true;
+            document.getElementById('vision_changes').checked = true;
+            document.getElementById('swelling').checked = true;
+            document.getElementById('hemoglobin').value = '11.2';
+            document.getElementById('proteinuria').value = 'moderate';
+        }
+        
+        // Parallax effects
+        function initParallax() {
+            const shapes = document.querySelectorAll('.floating-shape');
+            let mouseX = 0;
+            let mouseY = 0;
+            
+            document.addEventListener('mousemove', (e) => {
+                mouseX = e.clientX / window.innerWidth;
+                mouseY = e.clientY / window.innerHeight;
+                
+                shapes.forEach((shape, index) => {
+                    const speed = 0.5 + (index * 0.2);
+                    const x = (mouseX - 0.5) * speed * 50;
+                    const y = (mouseY - 0.5) * speed * 50;
+                    
+                    shape.style.transform = `translate(${x}px, ${y}px)`;
+                });
+            });
+        }
+        
+        // Smooth scroll animations for sections
+        function animateOnScroll() {
+            const sections = document.querySelectorAll('.section');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }
+                });
+            }, { threshold: 0.1 });
+            
+            sections.forEach(section => {
+                observer.observe(section);
+            });
+        }
+        
+        // Add demo button for judges
+        window.addEventListener('load', () => {
+            initParallax();
+            animateOnScroll();
+            
+            const demoBtn = document.createElement('button');
+            demoBtn.textContent = '🎬 Load Sunita Demo';
+            demoBtn.style.cssText = `
+                position: fixed;
+                top: 5rem;
+                right: 1.5rem;
+                background: linear-gradient(135deg, #f093fb, #f5576c);
+                color: white;
+                border: none;
+                padding: 0.75rem 1rem;
+                border-radius: 20px;
+                font-size: 0.875rem;
+                font-weight: 600;
+                cursor: pointer;
+                z-index: 1000;
+                backdrop-filter: blur(10px);
+                border: 1px solid rgba(255, 255, 255, 0.2);
+                transition: all 0.3s ease;
+                box-shadow: 0 4px 15px rgba(240, 147, 251, 0.3);
+            `;
+            
+            demoBtn.addEventListener('mouseenter', () => {
+                demoBtn.style.transform = 'translateY(-2px)';
+                demoBtn.style.boxShadow = '0 6px 20px rgba(240, 147, 251, 0.4)';
+            });
+            
+            demoBtn.addEventListener('mouseleave', () => {
+                demoBtn.style.transform = 'translateY(0)';
+                demoBtn.style.boxShadow = '0 4px 15px rgba(240, 147, 251, 0.3)';
+            });
+            
+            demoBtn.onclick = loadSunitaDemo;
+            document.body.appendChild(demoBtn);
+        });
+    </script>
+</body>
+</html>

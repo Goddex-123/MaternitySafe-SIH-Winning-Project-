@@ -1,0 +1,1194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MaternitySafe - Hospital Dashboard</title>
+    <meta name="theme-color" content="#0f0f0f">
+    <link href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #007AFF;
+            --secondary: #5856D6;
+            --accent: #FF3B30;
+            --success: #34C759;
+            --warning: #FF9500;
+            --error: #FF3B30;
+            
+            /* Dark theme colors */
+            --bg-primary: #000000;
+            --bg-secondary: #0a0a0a;
+            --bg-tertiary: #161618;
+            --surface: #1c1c1e;
+            --surface-elevated: #2c2c2e;
+            
+            /* Glass morphism */
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --glass-shadow: rgba(0, 0, 0, 0.3);
+            
+            /* Text colors */
+            --text-primary: #ffffff;
+            --text-secondary: rgba(255, 255, 255, 0.8);
+            --text-tertiary: rgba(255, 255, 255, 0.6);
+            --text-disabled: rgba(255, 255, 255, 0.3);
+            
+            /* Status colors */
+            --emergency: #FF3B30;
+            --high: #FF9500;
+            --medium: #34C759;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        body {
+            font-family: 'SF Pro Display', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            background-image: 
+                radial-gradient(at 40% 20%, hsla(225, 100%, 25%, 0.1) 0px, transparent 50%),
+                radial-gradient(at 80% 0%, hsla(189, 100%, 56%, 0.1) 0px, transparent 50%),
+                radial-gradient(at 0% 50%, hsla(355, 100%, 93%, 0.05) 0px, transparent 50%),
+                radial-gradient(at 80% 50%, hsla(340, 100%, 76%, 0.1) 0px, transparent 50%),
+                radial-gradient(at 0% 100%, hsla(22, 100%, 77%, 0.05) 0px, transparent 50%),
+                radial-gradient(at 80% 100%, hsla(242, 100%, 70%, 0.1) 0px, transparent 50%),
+                radial-gradient(at 0% 0%, hsla(343, 100%, 76%, 0.05) 0px, transparent 50%);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+            padding: 1.5rem;
+        }
+        
+        /* 3D Parallax Background Elements */
+        .bg-elements {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+            perspective: 1000px;
+        }
+        
+        .floating-shape {
+            position: absolute;
+            background: var(--glass-bg);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border: 1px solid var(--glass-border);
+            border-radius: 50%;
+            animation: float3D 10s ease-in-out infinite;
+            box-shadow: 
+                0 12px 48px var(--glass-shadow),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+        
+        .shape1 {
+            width: 350px;
+            height: 350px;
+            top: 2%;
+            left: -8%;
+            animation-delay: 0s;
+            background: linear-gradient(135deg, 
+                rgba(0, 122, 255, 0.12) 0%, 
+                rgba(88, 86, 214, 0.06) 100%);
+        }
+        
+        .shape2 {
+            width: 250px;
+            height: 250px;
+            top: 35%;
+            right: -5%;
+            animation-delay: 3s;
+            background: linear-gradient(135deg, 
+                rgba(255, 59, 48, 0.1) 0%, 
+                rgba(255, 149, 0, 0.06) 100%);
+        }
+        
+        .shape3 {
+            width: 180px;
+            height: 180px;
+            top: 70%;
+            left: 10%;
+            animation-delay: 6s;
+            background: linear-gradient(135deg, 
+                rgba(52, 199, 89, 0.1) 0%, 
+                rgba(0, 122, 255, 0.06) 100%);
+        }
+        
+        .shape4 {
+            width: 140px;
+            height: 140px;
+            top: 15%;
+            right: 20%;
+            animation-delay: 9s;
+            background: linear-gradient(135deg, 
+                rgba(88, 86, 214, 0.1) 0%, 
+                rgba(255, 59, 48, 0.06) 100%);
+        }
+        
+        @keyframes float3D {
+            0%, 100% { 
+                transform: translateY(0px) translateX(0px) rotateX(0deg) rotateY(0deg) scale(1);
+                filter: blur(0px);
+            }
+            25% { 
+                transform: translateY(-40px) translateX(25px) rotateX(6deg) rotateY(-6deg) scale(1.05);
+                filter: blur(1px);
+            }
+            50% { 
+                transform: translateY(-20px) translateX(-30px) rotateX(-4deg) rotateY(10deg) scale(0.95);
+                filter: blur(0.5px);
+            }
+            75% { 
+                transform: translateY(-50px) translateX(20px) rotateX(8deg) rotateY(-4deg) scale(1.03);
+                filter: blur(1.5px);
+            }
+        }
+        
+        .dashboard-container {
+            max-width: 1600px;
+            margin: 0 auto;
+            background: var(--glass-bg);
+            backdrop-filter: blur(40px);
+            -webkit-backdrop-filter: blur(40px);
+            border: 1px solid var(--glass-border);
+            border-radius: 32px;
+            box-shadow: 
+                0 25px 80px rgba(0, 0, 0, 0.4),
+                0 12px 40px rgba(0, 0, 0, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1),
+                inset 0 -1px 0 rgba(255, 255, 255, 0.05);
+            overflow: hidden;
+            animation: slideUp 1.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            transform-style: preserve-3d;
+        }
+        
+        .dashboard-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, 
+                transparent 0%, 
+                var(--primary) 25%, 
+                var(--secondary) 50%, 
+                var(--primary) 75%, 
+                transparent 100%);
+            animation: shimmer 5s ease-in-out infinite;
+            opacity: 0.8;
+        }
+        
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(100px) rotateX(15deg);
+                filter: blur(15px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) rotateX(0deg);
+                filter: blur(0px);
+            }
+        }
+        
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); opacity: 0; }
+            50% { opacity: 1; }
+            100% { transform: translateX(100%); opacity: 0; }
+        }
+        
+        .header {
+            background: linear-gradient(135deg, 
+                var(--error) 0%, 
+                rgba(255, 59, 48, 0.8) 100%);
+            color: white;
+            padding: 2.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -50%;
+            width: 200%;
+            height: 100%;
+            background: linear-gradient(45deg, 
+                transparent, 
+                rgba(255, 255, 255, 0.1), 
+                transparent);
+            animation: headerShimmer 8s ease-in-out infinite;
+        }
+        
+        @keyframes headerShimmer {
+            0% { transform: translateX(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) rotate(45deg); }
+        }
+        
+        .header-left h1 {
+            font-size: 2.2rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            position: relative;
+            z-index: 1;
+            text-shadow: 0 0 30px rgba(255, 255, 255, 0.2);
+            letter-spacing: -0.02em;
+        }
+        
+        .header-left p {
+            font-size: 1.2rem;
+            font-weight: 400;
+            opacity: 0.95;
+            position: relative;
+            z-index: 1;
+            letter-spacing: 0.01em;
+        }
+        
+        .status-badges {
+            display: flex;
+            gap: 1.5rem;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .badge {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 1.2rem 1.5rem;
+            border-radius: 24px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 
+                0 8px 32px rgba(0, 0, 0, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .badge:hover {
+            transform: translateY(-2px) scale(1.05);
+            box-shadow: 
+                0 12px 40px rgba(0, 0, 0, 0.25),
+                inset 0 1px 0 rgba(255, 255, 255, 0.15);
+        }
+        
+        .badge-number {
+            font-size: 1.8rem;
+            font-weight: 800;
+            display: block;
+            margin-bottom: 0.3rem;
+        }
+        
+        .badge-label {
+            font-size: 0.85rem;
+            opacity: 0.9;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        .main-content {
+            padding: 2.5rem;
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+            background: var(--surface);
+        }
+        
+        .referrals-section h2 {
+            color: var(--text-primary);
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            letter-spacing: -0.01em;
+        }
+        
+        .referral-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 
+                0 8px 32px rgba(0, 0, 0, 0.15),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+        
+        .referral-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: transparent;
+            transition: all 0.3s ease;
+        }
+        
+        .referral-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 
+                0 20px 60px rgba(0, 0, 0, 0.2),
+                0 8px 32px rgba(0, 0, 0, 0.15),
+                inset 0 1px 0 rgba(255, 255, 255, 0.15);
+        }
+        
+        .referral-card.emergency {
+            border-color: var(--error);
+        }
+        
+        .referral-card.emergency::before {
+            background: linear-gradient(90deg, var(--error), rgba(255, 59, 48, 0.6));
+        }
+        
+        .referral-card.high {
+            border-color: var(--warning);
+        }
+        
+        .referral-card.high::before {
+            background: linear-gradient(90deg, var(--warning), rgba(255, 149, 0, 0.6));
+        }
+        
+        .referral-card.medium {
+            border-color: var(--success);
+        }
+        
+        .referral-card.medium::before {
+            background: linear-gradient(90deg, var(--success), rgba(52, 199, 89, 0.6));
+        }
+        
+        .risk-indicator {
+            position: absolute;
+            top: -12px;
+            right: 2rem;
+            padding: 0.8rem 1.2rem;
+            border-radius: 25px;
+            font-size: 0.9rem;
+            font-weight: 800;
+            color: white;
+            animation: riskPulse 2.5s ease-in-out infinite;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            letter-spacing: 0.05em;
+        }
+        
+        .risk-emergency { 
+            background: linear-gradient(135deg, var(--error), rgba(255, 59, 48, 0.8));
+            box-shadow: 0 4px 20px rgba(255, 59, 48, 0.4);
+        }
+        
+        .risk-high { 
+            background: linear-gradient(135deg, var(--warning), rgba(255, 149, 0, 0.8));
+            box-shadow: 0 4px 20px rgba(255, 149, 0, 0.4);
+        }
+        
+        .risk-medium { 
+            background: linear-gradient(135deg, var(--success), rgba(52, 199, 89, 0.8));
+            box-shadow: 0 4px 20px rgba(52, 199, 89, 0.4);
+        }
+        
+        @keyframes riskPulse {
+            0%, 100% { transform: scale(1); box-shadow: inherit; }
+            50% { transform: scale(1.05); filter: brightness(1.1); }
+        }
+        
+        .patient-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .info-group h4 {
+            color: var(--text-tertiary);
+            font-size: 0.85rem;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            font-weight: 600;
+        }
+        
+        .info-group p {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        
+        .vitals-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin: 1.5rem 0;
+            padding: 1.5rem;
+            background: var(--glass-bg);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border-radius: 16px;
+            border: 1px solid var(--glass-border);
+            box-shadow: 
+                0 4px 16px rgba(0, 0, 0, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 0.08);
+        }
+        
+        .vital-item {
+            text-align: center;
+        }
+        
+        .vital-value {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--error);
+            margin-bottom: 0.3rem;
+        }
+        
+        .vital-label {
+            font-size: 0.8rem;
+            color: var(--text-tertiary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-weight: 500;
+        }
+        
+        .symptoms-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            margin: 1rem 0;
+        }
+        
+        .symptom-tag {
+            background: linear-gradient(135deg, var(--error), rgba(255, 59, 48, 0.8));
+            color: white;
+            padding: 0.6rem 1rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 4px 12px rgba(255, 59, 48, 0.3);
+        }
+        
+        .eta-info {
+            background: var(--glass-bg);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid var(--glass-border);
+            padding: 1.2rem;
+            border-radius: 16px;
+            margin-top: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 
+                0 4px 16px rgba(0, 0, 0, 0.08),
+                inset 0 1px 0 rgba(255, 255, 255, 0.08);
+        }
+        
+        .eta-info strong {
+            color: var(--primary);
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+        
+        .btn {
+            padding: 1rem 1.5rem;
+            border: none;
+            border-radius: 16px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, 
+                transparent, 
+                rgba(255, 255, 255, 0.2), 
+                transparent);
+            transition: left 0.6s ease;
+        }
+        
+        .btn:hover::before {
+            left: 100%;
+        }
+        
+        .btn-accept {
+            background: linear-gradient(135deg, var(--success), rgba(52, 199, 89, 0.8));
+            color: white;
+            box-shadow: 0 8px 32px rgba(52, 199, 89, 0.25);
+        }
+        
+        .btn-accept:hover {
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 0 12px 40px rgba(52, 199, 89, 0.35);
+        }
+        
+        .btn-transfer {
+            background: linear-gradient(135deg, var(--warning), rgba(255, 149, 0, 0.8));
+            color: white;
+            box-shadow: 0 8px 32px rgba(255, 149, 0, 0.25);
+        }
+        
+        .btn-transfer:hover {
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 0 12px 40px rgba(255, 149, 0, 0.35);
+        }
+        
+        .sidebar {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            padding: 2rem;
+            border-radius: 24px;
+            height: fit-content;
+            box-shadow: 
+                0 8px 32px rgba(0, 0, 0, 0.12),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+        
+        .stats-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid var(--glass-border);
+            padding: 2rem;
+            border-radius: 20px;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            box-shadow: 
+                0 6px 24px rgba(0, 0, 0, 0.08),
+                inset 0 1px 0 rgba(255, 255, 255, 0.08);
+            transition: all 0.3s ease;
+        }
+        
+        .stats-card:hover {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 
+                0 12px 40px rgba(0, 0, 0, 0.12),
+                inset 0 1px 0 rgba(255, 255, 255, 0.12);
+        }
+        
+        .stats-card h3 {
+            color: var(--primary);
+            font-size: 2.2rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 0 20px rgba(0, 122, 255, 0.3);
+        }
+        
+        .stats-card p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        .capacity-info {
+            background: var(--glass-bg);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid var(--glass-border);
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 
+                0 6px 24px rgba(0, 0, 0, 0.08),
+                inset 0 1px 0 rgba(255, 255, 255, 0.08);
+        }
+        
+        .capacity-info h3 {
+            color: var(--text-primary);
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 1.2rem;
+        }
+        
+        .capacity-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.8rem 0;
+            border-bottom: 1px solid var(--glass-border);
+        }
+        
+        .capacity-item:last-child {
+            border-bottom: none;
+        }
+        
+        .capacity-item span:first-child {
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+        
+        .capacity-available {
+            color: var(--success);
+            font-weight: 700;
+        }
+        
+        .capacity-limited {
+            color: var(--warning);
+            font-weight: 700;
+        }
+        
+        .capacity-full {
+            color: var(--error);
+            font-weight: 700;
+        }
+        
+        .notification {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            background: var(--glass-bg);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            border: 1px solid var(--glass-border);
+            color: var(--text-primary);
+            padding: 1.5rem 2rem;
+            border-radius: 20px;
+            box-shadow: 
+                0 12px 48px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            transform: translateX(400px);
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            z-index: 1000;
+            max-width: 350px;
+        }
+        
+        .notification.show {
+            transform: translateX(0);
+        }
+        
+        .notification strong {
+            display: block;
+            color: var(--success);
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+        }
+        
+        .timestamp {
+            color: var(--text-tertiary);
+            font-size: 0.85rem;
+            margin-top: 1rem;
+            font-weight: 500;
+        }
+        
+        /* Responsive design */
+        @media (max-width: 1200px) {
+            .main-content {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+            
+            .patient-info {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            body {
+                padding: 1rem;
+            }
+            
+            .header {
+                flex-direction: column;
+                gap: 1.5rem;
+                text-align: center;
+            }
+            
+            .status-badges {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .vitals-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 3D Parallax Background Elements -->
+    <div class="bg-elements">
+        <div class="floating-shape shape1"></div>
+        <div class="floating-shape shape2"></div>
+        <div class="floating-shape shape3"></div>
+        <div class="floating-shape shape4"></div>
+    </div>
+    
+    <div class="dashboard-container">
+        <div class="header">
+            <div class="header-left">
+                <h1>🏥 District Hospital - Alwar</h1>
+                <p>Emergency & Maternity Dashboard</p>
+            </div>
+            <div class="status-badges">
+                <div class="badge">
+                    <span class="badge-number" id="activeReferrals">3</span>
+                    <span class="badge-label">Active Referrals</span>
+                </div>
+                <div class="badge">
+                    <span class="badge-number" id="todayAdmissions">12</span>
+                    <span class="badge-label">Today's Admissions</span>
+                </div>
+                <div class="badge">
+                    <span class="badge-number">98%</span>
+                    <span class="badge-label">System Uptime</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="main-content">
+            <div class="referrals-section">
+                <h2>🚨 Active Referrals</h2>
+                
+                <!-- Emergency Case -->
+                <div class="referral-card emergency">
+                    <div class="risk-indicator risk-emergency">EMERGENCY</div>
+                    <div class="patient-info">
+                        <div class="info-group">
+                            <h4>Patient Name</h4>
+                            <p>Sunita Devi</p>
+                        </div>
+                        <div class="info-group">
+                            <h4>Age / Gestational</h4>
+                            <p>28 years / 36 weeks</p>
+                        </div>
+                        <div class="info-group">
+                            <h4>Referring ASHA</h4>
+                            <p>Kavita Sharma - Rajgadh PHC</p>
+                        </div>
+                        <div class="info-group">
+                            <h4>Risk Score</h4>
+                            <p>33/100 - EMERGENCY</p>
+                        </div>
+                    </div>
+                    
+                    <div class="vitals-grid">
+                        <div class="vital-item">
+                            <div class="vital-value">165/105</div>
+                            <div class="vital-label">Blood Pressure</div>
+                        </div>
+                        <div class="vital-item">
+                            <div class="vital-value">11.2</div>
+                            <div class="vital-label">Hemoglobin</div>
+                        </div>
+                        <div class="vital-item">
+                            <div class="vital-value">++</div>
+                            <div class="vital-label">Proteinuria</div>
+                        </div>
+                    </div>
+                    
+                    <div class="symptoms-list">
+                        <span class="symptom-tag">Severe Headache</span>
+                        <span class="symptom-tag">Vision Changes</span>
+                        <span class="symptom-tag">Swelling</span>
+                    </div>
+                    
+                    <div class="eta-info">
+                        <span>🚑 <strong>ETA: 8 minutes</strong> - Ambulance en route</span>
+                        <span style="color: var(--error); font-weight: 600;">Suspected Pre-eclampsia</span>
+                    </div>
+                    
+                    <div class="action-buttons">
+                        <button class="btn btn-accept" onclick="acceptReferral('REF001')">
+                            ✅ Accept & Prepare
+                        </button>
+                    </div>
+                    
+                    <div class="timestamp">
+                        Referred: 2 minutes ago | Referral ID: REF001
+                    </div>
+                </div>
+                
+                <!-- High Risk Case -->
+                <div class="referral-card high">
+                    <div class="risk-indicator risk-high">HIGH RISK</div>
+                    <div class="patient-info">
+                        <div class="info-group">
+                            <h4>Patient Name</h4>
+                            <p>Meera Singh</p>
+                        </div>
+                        <div class="info-group">
+                            <h4>Age / Gestational</h4>
+                            <p>24 years / 38 weeks</p>
+                        </div>
+                        <div class="info-group">
+                            <h4>Referring ASHA</h4>
+                            <p>Priya Verma - Thanagazi PHC</p>
+                        </div>
+                        <div class="info-group">
+                            <h4>Risk Score</h4>
+                            <p>18/100 - HIGH</p>
+                        </div>
+                    </div>
+                    
+                    <div class="vitals-grid">
+                        <div class="vital-item">
+                            <div class="vital-value">148/94</div>
+                            <div class="vital-label">Blood Pressure</div>
+                        </div>
+                        <div class="vital-item">
+                            <div class="vital-value">8.9</div>
+                            <div class="vital-label">Hemoglobin</div>
+                        </div>
+                        <div class="vital-item">
+                            <div class="vital-value">+</div>
+                            <div class="vital-label">Proteinuria</div>
+                        </div>
+                    </div>
+                    
+                    <div class="symptoms-list">
+                        <span class="symptom-tag">Abdominal Pain</span>
+                        <span class="symptom-tag">Reduced Fetal Movement</span>
+                    </div>
+                    
+                    <div class="eta-info">
+                        <span>🚗 <strong>ETA: 25 minutes</strong> - Family transport</span>
+                        <span style="color: var(--warning); font-weight: 600;">Monitoring Required</span>
+                    </div>
+                    
+                    <div class="action-buttons">
+                        <button class="btn btn-accept" onclick="acceptReferral('REF002')">
+                            ✅ Accept Referral
+                        </button>
+                        <button class="btn btn-transfer" onclick="transferReferral('REF002')">
+                            🔄 Transfer to Jaipur
+                        </button>
+                    </div>
+                    
+                    <div class="timestamp">
+                        Referred: 15 minutes ago | Referral ID: REF002
+                    </div>
+                </div>
+                
+                <!-- Medium Risk Case -->
+                <div class="referral-card medium">
+                    <div class="risk-indicator risk-medium">MEDIUM RISK</div>
+                    <div class="patient-info">
+                        <div class="info-group">
+                            <h4>Patient Name</h4>
+                            <p>Anju Sharma</p>
+                        </div>
+                        <div class="info-group">
+                            <h4>Age / Gestational</h4>
+                            <p>31 years / 34 weeks</p>
+                        </div>
+                        <div class="info-group">
+                            <h4>Referring ASHA</h4>
+                            <p>Sita Devi - Behror PHC</p>
+                        </div>
+                        <div class="info-group">
+                            <h4>Risk Score</h4>
+                            <p>12/100 - MEDIUM</p>
+                        </div>
+                    </div>
+                    
+                    <div class="vitals-grid">
+                        <div class="vital-item">
+                            <div class="vital-value">138/88</div>
+                            <div class="vital-label">Blood Pressure</div>
+                        </div>
+                        <div class="vital-item">
+                            <div class="vital-value">10.8</div>
+                            <div class="vital-label">Hemoglobin</div>
+                        </div>
+                        <div class="vital-item">
+                            <div class="vital-value">Trace</div>
+                            <div class="vital-label">Proteinuria</div>
+                        </div>
+                    </div>
+                    
+                    <div class="symptoms-list">
+                        <span class="symptom-tag">Mild Swelling</span>
+                        <span class="symptom-tag">Occasional Headache</span>
+                    </div>
+                    
+                    <div class="eta-info">
+                        <span>🚗 <strong>ETA: 40 minutes</strong> - Scheduled visit</span>
+                        <span style="color: var(--success); font-weight: 600;">Routine Follow-up</span>
+                    </div>
+                    
+                    <div class="action-buttons">
+                        <button class="btn btn-accept" onclick="acceptReferral('REF003')">
+                            ✅ Schedule Appointment
+                        </button>
+                    </div>
+                    
+                    <div class="timestamp">
+                        Referred: 1 hour ago | Referral ID: REF003
+                    </div>
+                </div>
+            </div>
+            
+            <div class="sidebar">
+                <div class="stats-card">
+                    <h3>15</h3>
+                    <p>Available Maternity Beds</p>
+                </div>
+                
+                <div class="stats-card">
+                    <h3>4</h3>
+                    <p>OB/GYN Specialists On-Duty</p>
+                </div>
+                
+                <div class="capacity-info">
+                    <h3>🏥 Current Capacity</h3>
+                    <div class="capacity-item">
+                        <span>Maternity Ward</span>
+                        <span class="capacity-available">15/25 Available</span>
+                    </div>
+                    <div class="capacity-item">
+                        <span>Emergency Department</span>
+                        <span class="capacity-available">8/12 Available</span>
+                    </div>
+                    <div class="capacity-item">
+                        <span>Operating Theater</span>
+                        <span class="capacity-limited">1/3 Available</span>
+                    </div>
+                    <div class="capacity-item">
+                        <span>Blood Bank</span>
+                        <span class="capacity-available">Available</span>
+                    </div>
+                    <div class="capacity-item">
+                        <span>NICU</span>
+                        <span class="capacity-limited">2/6 Available</span>
+                    </div>
+                </div>
+                
+                <div class="stats-card" style="margin-top: 2rem;">
+                    <h3 style="color: var(--success);">96%</h3>
+                    <p>Successful Outcomes This Month</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="notification" id="notification">
+        <strong>🚨 New Emergency Referral</strong>
+        High-risk patient incoming - ETA 8 minutes
+    </div>
+    
+    <script>
+        // Enhanced parallax effects
+        function initParallax() {
+            const shapes = document.querySelectorAll('.floating-shape');
+            let mouseX = 0;
+            let mouseY = 0;
+            
+            document.addEventListener('mousemove', (e) => {
+                mouseX = e.clientX / window.innerWidth;
+                mouseY = e.clientY / window.innerHeight;
+                
+                shapes.forEach((shape, index) => {
+                    const speed = 0.2 + (index * 0.1);
+                    const x = (mouseX - 0.5) * speed * 30;
+                    const y = (mouseY - 0.5) * speed * 30;
+                    const rotateX = (mouseY - 0.5) * speed * 10;
+                    const rotateY = (mouseX - 0.5) * speed * 10;
+                    
+                    shape.style.transform = `translate(${x}px, ${y}px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+                });
+            });
+        }
+        
+        // Enhanced notification system
+        function showNotification(message, type = 'success') {
+            const notification = document.getElementById('notification');
+            notification.innerHTML = message;
+            
+            // Color based on type
+            const colors = {
+                success: 'var(--success)',
+                warning: 'var(--warning)',
+                error: 'var(--error)',
+                info: 'var(--primary)'
+            };
+            
+            notification.querySelector('strong').style.color = colors[type] || colors.success;
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 6000);
+        }
+        
+        function acceptReferral(referralId) {
+            showNotification(`
+                <strong>✅ Referral ${referralId} Accepted</strong>
+                Preparing emergency bay and notifying medical team
+            `, 'success');
+            
+            // Update counters
+            const activeCount = document.getElementById('activeReferrals');
+            const todayCount = document.getElementById('todayAdmissions');
+            todayCount.textContent = parseInt(todayCount.textContent) + 1;
+            
+            // Update card status
+            setTimeout(() => {
+                const card = event.target.closest('.referral-card');
+                card.style.opacity = '0.8';
+                card.style.transform = 'scale(0.98)';
+                card.querySelector('.action-buttons').innerHTML = `
+                    <div style="background: linear-gradient(135deg, var(--success), rgba(52, 199, 89, 0.8)); 
+                                color: white; padding: 1.2rem; border-radius: 16px; text-align: center; 
+                                font-weight: 700; backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.2);">
+                        ✅ ACCEPTED - Team Notified & Bay Prepared
+                    </div>
+                `;
+            }, 1200);
+        }
+        
+        function transferReferral(referralId) {
+            showNotification(`
+                <strong>🔄 Referral ${referralId} Transferred</strong>
+                Transferred to SMS Medical College - ETA 65 minutes
+            `, 'warning');
+            
+            setTimeout(() => {
+                const card = event.target.closest('.referral-card');
+                card.style.opacity = '0.8';
+                card.style.transform = 'scale(0.98)';
+                card.querySelector('.action-buttons').innerHTML = `
+                    <div style="background: linear-gradient(135deg, var(--warning), rgba(255, 149, 0, 0.8)); 
+                                color: white; padding: 1.2rem; border-radius: 16px; text-align: center; 
+                                font-weight: 700; backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.2);">
+                        🔄 TRANSFERRED - SMS Medical College Notified
+                    </div>
+                `;
+            }, 1200);
+        }
+        
+        // Real-time updates with smooth animations
+        function updateRealTimeData() {
+            // Update timestamps with smooth transition
+            document.querySelectorAll('.timestamp').forEach(timestamp => {
+                timestamp.style.transition = 'all 0.3s ease';
+                const text = timestamp.textContent;
+                if (text.includes('2 minutes ago')) {
+                    timestamp.textContent = text.replace('2 minutes ago', '3 minutes ago');
+                } else if (text.includes('15 minutes ago')) {
+                    timestamp.textContent = text.replace('15 minutes ago', '16 minutes ago');
+                } else if (text.includes('1 hour ago')) {
+                    timestamp.textContent = text.replace('1 hour ago', '1 hour 1 min ago');
+                }
+            });
+            
+            // Update ETAs with animation
+            const etaElements = document.querySelectorAll('.eta-info strong');
+            etaElements.forEach(eta => {
+                eta.style.transition = 'all 0.3s ease';
+                const currentEta = eta.textContent;
+                if (currentEta.includes('8 minutes')) {
+                    eta.textContent = 'ETA: 7 minutes';
+                    eta.style.color = 'var(--error)';
+                } else if (currentEta.includes('25 minutes')) {
+                    eta.textContent = 'ETA: 24 minutes';
+                } else if (currentEta.includes('40 minutes')) {
+                    eta.textContent = 'ETA: 39 minutes';
+                }
+            });
+        }
+        
+        // Simulate new referral with animation
+        function simulateNewReferral() {
+            setTimeout(() => {
+                showNotification(`
+                    <strong>🚨 New HIGH-RISK Referral</strong>
+                    Priya Kumari - 32 weeks, severe bleeding - ETA 12 minutes
+                `, 'error');
+                
+                const activeCount = document.getElementById('activeReferrals');
+                const count = parseInt(activeCount.textContent);
+                activeCount.textContent = count + 1;
+                
+                // Animate counter
+                activeCount.style.transform = 'scale(1.2)';
+                activeCount.style.color = 'var(--error)';
+                setTimeout(() => {
+                    activeCount.style.transform = 'scale(1)';
+                    activeCount.style.color = '';
+                }, 300);
+                
+            }, 12000);
+        }
+        
+        // Initialize everything with enhanced animations
+        window.addEventListener('load', () => {
+            initParallax();
+            
+            // Stagger card animations
+            const cards = document.querySelectorAll('.referral-card');
+            cards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(50px)';
+                setTimeout(() => {
+                    card.style.transition = 'all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, index * 200);
+            });
+            
+            // Show welcome notification
+            setTimeout(() => {
+                showNotification(`
+                    <strong>🏥 Dashboard Active</strong>
+                    Real-time monitoring enabled - 3 active referrals
+                `, 'info');
+            }, 2000);
+        });
+        
+        // Start real-time updates
+        setInterval(updateRealTimeData, 60000);
+        simulateNewReferral();
+    </script>
+</body>
+</html>
