@@ -224,12 +224,31 @@ npm start
 - **Backend Lead:** [Team Member]
 - **Product/Demo:** [Team Member]
 
+## License & Copyright
+
+### 📋 License
+This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) file for full details.
+
+### © Copyright
+**Copyright © 2024 MaternitySafe Development Team**  
+*Created for Smart India Hackathon 2024*
+
+### 🏥 Healthcare Disclaimer
+**IMPORTANT:** This software is a proof-of-concept decision support tool for healthcare professionals. It is NOT intended as a substitute for professional medical advice, diagnosis, or treatment. Always consult qualified healthcare providers for medical decisions.
+
+### 🇮🇳 Government Partnership
+This project is developed with the intention of potential collaboration with Government of India healthcare initiatives and may be made available for government use and adaptation for public health programs.
+
+For detailed copyright information, third-party acknowledgments, and usage guidelines, see [COPYRIGHT_NOTICE.md](COPYRIGHT_NOTICE.md).
+
 ## Contact
 
 - **GitHub:** [Your GitHub Link]
 - **Demo:** [Deployed Link]
 - **Email:** [Contact Email]
+- **License Inquiries:** [Contact for commercial/government use]
 
 ---
 
-*Built for Smart India Hackathon 2024 - Transforming maternal healthcare through technology*
+*Built for Smart India Hackathon 2024 - Transforming maternal healthcare through technology*  
+*Licensed under MIT License - Open for healthcare innovation and government collaboration*
